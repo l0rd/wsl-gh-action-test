@@ -1,0 +1,23 @@
+name: WSL Fedora Go
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  hello-world:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Fedora WSL
+        run: wsl --install -d FedoraLinux-44
+
+      - name: Install Go
+        run: wsl -d FedoraLinux-44 dnf install -y golang
+
+      - name: Run Go Hello World
+        run: wsl --cd "${{ github.workspace }}" -d FedoraLinux-44 go run main.go
