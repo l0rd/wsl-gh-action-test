@@ -12,13 +12,34 @@ jobs:
     runs-on: windows-2025
     steps:
       - uses: actions/checkout@v6
-      - uses: Vampire/setup-wsl@v7
-        with:
-          distribution: Debian-13
-          additional-packages: golang ca-certificates
+
+      - name: Enable WSL
+        shell: pwsh
+        run: wsl --install --no-distribution
+
+      - name: Download Fedora rootfs
+        shell: pwsh
+        run: |
+          $craneUrl = "https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Windows_x86_64.tar.gz"
+          Invoke-WebRequest -Uri $craneUrl -OutFile crane.tar.gz
+          tar xf crane.tar.gz crane.exe
+          .\crane.exe export quay.io/podman/machine-os@sha256:9fdd0c49456e0f297d5eea595f5fb07ea59befae033b4bc8327be07c66b73c95 fedora-rootfs.tar
+
+      - name: Import Fedora into WSL
+        shell: pwsh
+        run: |
+          New-Item -Path $env:USERPROFILE\wsl\fedora -ItemType Directory -Force
+          wsl --import Fedora $env:USERPROFILE\wsl\fedora fedora-rootfs.tar
+          wsl -d Fedora -- cat /etc/os-release
+
+      - name: Install Go and ca-certificates
+        shell: pwsh
+        run: wsl -d Fedora -- dnf install -y golang ca-certificates
+
       - name: Routes
-        shell: wsl-bash {0}
-        run: ip route show
+        shell: pwsh
+        run: wsl -d Fedora -- ip route show
+
       - name: Run Go Hello World
-        shell: wsl-bash {0}
-        run: go run main.go
+        shell: pwsh
+        run: wsl -d Fedora --cd "${{ github.workspace }}" -- go run main.go
