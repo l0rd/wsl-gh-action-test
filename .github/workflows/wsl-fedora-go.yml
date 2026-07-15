@@ -51,3 +51,7 @@ jobs:
         env:
           WSL_UTF8: '1'
         run: wsl -d PodmanMachineOS61 --cd "${{ github.workspace }}" -- go run main.go
+
+      - name: HyperV Firewall
+        shell: pwsh
+        run: Get-NetFirewallHyperVVMSetting -PolicyStore ActiveStore -Name '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}'
