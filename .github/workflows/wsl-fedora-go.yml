@@ -61,8 +61,13 @@ jobs:
       - name: Start HTTP server on host
         shell: pwsh
         run: |
-          Start-Process -NoNewWindow python -ArgumentList '-m', 'http.server', '8000'
+          $pythonPath = (Get-Command python -ErrorAction SilentlyContinue).Source
+          if (-not $pythonPath) { $pythonPath = (Get-Command python3 -ErrorAction SilentlyContinue).Source }
+          Write-Host "Python path: $pythonPath"
+          Start-Process -NoNewWindow -FilePath $pythonPath -ArgumentList '-m', 'http.server', '8000'
           Start-Sleep -Seconds 2
+          Get-Process python* | Format-Table Id, ProcessName, Path
+          netstat -ano | Select-String ":8000"
 
       - name: Debug connectivity
         shell: pwsh
