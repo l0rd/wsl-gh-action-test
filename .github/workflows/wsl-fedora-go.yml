@@ -58,45 +58,13 @@ jobs:
           Set-NetFirewallHyperVVMSetting -Name '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -DefaultInboundAction Allow
           New-NetFirewallRule -DisplayName "Allow Python HTTP 8000" -Direction Inbound -Protocol TCP -LocalPort 8000 -Action Allow
 
-      - name: Start HTTP server on host
-        shell: pwsh
-        run: |
-          $pythonPath = (Get-Command python -ErrorAction SilentlyContinue).Source
-          if (-not $pythonPath) { $pythonPath = (Get-Command python3 -ErrorAction SilentlyContinue).Source }
-          Write-Host "Python path: $pythonPath"
-          Start-Process -NoNewWindow -FilePath $pythonPath -ArgumentList '-m', 'http.server', '8000'
-          Start-Sleep -Seconds 2
-          Get-Process python* | Format-Table Id, ProcessName, Path
-          netstat -ano | Select-String ":8000"
-
-      - name: Debug connectivity
-        shell: pwsh
-        env:
-          WSL_UTF8: '1'
-        run: |
-          Write-Host "=== Python process ==="
-          Get-Process python* -ErrorAction SilentlyContinue | Format-Table Id, ProcessName, Path
-          Write-Host "=== Listening on port 8000 ==="
-          netstat -ano | Select-String ":8000"
-          Write-Host "=== Host curl to localhost:8000 ==="
-          curl.exe -s -o /dev/null -w '%{http_code}' --connect-timeout 3 http://localhost:8000
-          Write-Host ""
-          Write-Host "=== WSL ip addr ==="
-          wsl -d PodmanMachineOS61 -- ip addr show eth0
-          Write-Host "=== WSL default route ==="
-          wsl -d PodmanMachineOS61 -- ip route show default
-          $hostIP = wsl -d PodmanMachineOS61 --cd "${{ github.workspace }}" -- go run main.go
-          Write-Host "=== Host IP from Go: $hostIP ==="
-          Write-Host "=== WSL ping host ==="
-          wsl -d PodmanMachineOS61 -- ping -c 2 -W 2 $hostIP
-          Write-Host "=== WSL curl host:8000 ==="
-          wsl -d PodmanMachineOS61 -- curl -v --connect-timeout 5 "http://${hostIP}:8000" 2>&1
-
       - name: Test WSL to host connectivity
         shell: pwsh
         env:
           WSL_UTF8: '1'
         run: |
+          Start-Process -NoNewWindow python -ArgumentList '-m', 'http.server', '8000'
+          Start-Sleep -Seconds 2
           $hostIP = wsl -d PodmanMachineOS61 --cd "${{ github.workspace }}" -- go run main.go
           Write-Host "Host IP: $hostIP"
           wsl -d PodmanMachineOS61 -- curl -s -o /dev/null -w '%{http_code}' --connect-timeout 5 "http://${hostIP}:8000"
