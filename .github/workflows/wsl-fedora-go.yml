@@ -55,7 +55,7 @@ jobs:
       - name: Allow WSL inbound traffic
         shell: pwsh
         run: |
-          Set-NetFirewallHyperVVMSetting -Name '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -DefaultInboundAction Allow
+          # Set-NetFirewallHyperVVMSetting -Name '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -DefaultInboundAction Allow
           New-NetFirewallRule -DisplayName "Allow Python HTTP 8000" -Direction Inbound -Protocol TCP -LocalPort 8000 -Action Allow
 
       - name: Test WSL to host connectivity
