@@ -52,6 +52,21 @@ jobs:
           WSL_UTF8: '1'
         run: wsl -d PodmanMachineOS61 --cd "${{ github.workspace }}" -- go run main.go
 
+      - name: Start HTTP server on host
+        shell: pwsh
+        run: |
+          Start-Process -NoNewWindow python -ArgumentList '-m', 'http.server', '8000'
+          Start-Sleep -Seconds 2
+
+      - name: Test WSL to host connectivity
+        shell: pwsh
+        env:
+          WSL_UTF8: '1'
+        run: |
+          $hostIP = wsl -d PodmanMachineOS61 --cd "${{ github.workspace }}" -- go run main.go
+          Write-Host "Host IP: $hostIP"
+          wsl -d PodmanMachineOS61 -- curl -s -o /dev/null -w '%{http_code}' --connect-timeout 5 "http://${hostIP}:8000"
+
       - name: HyperV Firewall
         shell: pwsh
         run: Get-NetFirewallHyperVVMSetting -PolicyStore ActiveStore -Name '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}'
