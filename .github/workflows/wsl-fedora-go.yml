@@ -15,7 +15,7 @@ jobs:
       - uses: Vampire/setup-wsl@v7
         with:
           distribution: Debian-13
-          additional-packages: golang
+          additional-packages: golang ca-certificates
       - name: Routes
         shell: wsl-bash {0}
         run: ip route show
