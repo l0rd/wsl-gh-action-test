@@ -16,6 +16,9 @@ jobs:
         with:
           distribution: Ubuntu-18.04
           additional-packages: golang
+      - name: Routes
+        shell: wsl-bash {0}
+        run: ip route show
       - name: Run Go Hello World
         shell: wsl-bash {0}
         run: go run main.go
