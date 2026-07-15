@@ -27,19 +27,27 @@ jobs:
 
       - name: Import Fedora into WSL
         shell: pwsh
+        env:
+          WSL_UTF8: '1'
         run: |
           New-Item -Path $env:USERPROFILE\wsl\fedora -ItemType Directory -Force
-          wsl --import Fedora $env:USERPROFILE\wsl\fedora fedora-rootfs.tar
-          wsl -d Fedora -- cat /etc/os-release
+          wsl --import PodmanMachineOS61 $env:USERPROFILE\wsl\fedora fedora-rootfs.tar
+          wsl -d PodmanMachineOS61 -- cat /etc/os-release
 
       - name: Install Go and ca-certificates
         shell: pwsh
-        run: wsl -d Fedora -- dnf install -y golang ca-certificates
+        env:
+          WSL_UTF8: '1'
+        run: wsl -d PodmanMachineOS61 -- dnf install -y golang ca-certificates
 
       - name: Routes
         shell: pwsh
-        run: wsl -d Fedora -- ip route show
+        env:
+          WSL_UTF8: '1'
+        run: wsl -d PodmanMachineOS61 -- ip route show
 
       - name: Run Go Hello World
         shell: pwsh
-        run: wsl -d Fedora --cd "${{ github.workspace }}" -- go run main.go
+        env:
+          WSL_UTF8: '1'
+        run: wsl -d PodmanMachineOS61 --cd "${{ github.workspace }}" -- go run main.go
