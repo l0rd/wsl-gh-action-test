@@ -54,7 +54,7 @@ jobs:
 
       - name: Allow WSL to host on port 8000
         shell: pwsh
-        run: New-NetFirewallHyperVRule -Name "AllowWSLPort8000" -Direction Inbound -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -Protocol TCP -LocalPorts 8000 -Action Allow
+        run: New-NetFirewallHyperVRule -Name "AllowWSLPort8000" -DisplayName "Allow WSL to host on port 8000" -Direction Inbound -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -Protocol TCP -LocalPorts 8000 -Action Allow
 
       - name: Start HTTP server on host
         shell: pwsh
