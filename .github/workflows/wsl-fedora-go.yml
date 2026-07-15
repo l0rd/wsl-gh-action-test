@@ -23,7 +23,7 @@ jobs:
           $craneUrl = "https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Windows_x86_64.tar.gz"
           Invoke-WebRequest -Uri $craneUrl -OutFile crane.tar.gz
           tar xf crane.tar.gz crane.exe
-          .\crane.exe export quay.io/podman/machine-os@sha256:9fdd0c49456e0f297d5eea595f5fb07ea59befae033b4bc8327be07c66b73c95 fedora-rootfs.tar
+          .\crane.exe export quay.io/podman/machine-os@sha256:473ba5bad8d2ffb1b0510af72a00c68edcd7f868ed8c0c0762e36cf901a0ca06 fedora-rootfs.tar
 
       - name: Import Fedora into WSL
         shell: pwsh
