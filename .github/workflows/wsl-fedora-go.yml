@@ -55,7 +55,7 @@ jobs:
       - name: Allow WSL inbound traffic
         shell: pwsh
         env:
-          TARGET_PORT: '62545' # Used in e2e test "Podman ops with port forwarding and gvproxy"
+          TARGET_PORT: '8000' # Used in e2e test "Podman ops with port forwarding and gvproxy"
         run: |
           New-NetFirewallRule -DisplayName "Allow Python HTTP 8000" -Direction Inbound -RemoteAddress LocalSubnet -Protocol TCP -LocalPort "$env:TARGET_PORT" -Action Allow
 
